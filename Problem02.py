@@ -47,15 +47,7 @@ def verbose_run(prog):
     print("Final output:")
     print(run(prog))
 
-
-
-prob2text = list_from_file("Prob2-intcode-corrected.txt", sep=",")
-prob2code = [int(x) for x in prob2text]
-
-verbose_run(prob2code)
-
-# print(len(prob2code))
-
+####################################
 # Testing the program on the provided test inputs:
 
 # testprog0 = [
@@ -73,3 +65,51 @@ verbose_run(prob2code)
 # for p in [testprog1, testprog2, testprog3, testprog4]: 
 #     verbose_run(p)
 #     print()
+
+
+####################################
+# Problem 2a:
+
+# prob2a_text = list_from_file("Prob2-intcode-corrected.txt", sep=",")
+# prob2a_code = [int(x) for x in prob2a_text]
+# verbose_run(prob2a_code)
+# Answer: 9706670
+
+
+####################################
+# Problem 2b:
+# verb = 12
+# noun = 2
+
+prob2b_base = [int(x) for x in list_from_file("Prob2-intcode.txt", sep=",")]
+
+def input_verb_noun(prog, noun, verb):
+    """Given a verb and a noun, input them into positions 1 and 2 of prog"""
+    prog_v1 = modify_list(prog, 1, noun)
+    prog_v2 = modify_list(prog_v1, 2, verb)
+    return prog_v2
+
+def run_AGC(noun, verb):
+    """Run the Apollo Guidance Computer (with fixed prob2b_base)
+    using specified verb and noun,
+    return the final value of address 0"""
+    prog = input_verb_noun(prob2b_base, noun, verb)
+    output = run(prog)
+    return output[0]
+
+# print(run_AGC(0,0))
+
+# print(run_AGC(12,2))
+
+def find_target_value(target):
+    for noun in range(100):
+        for verb in range(100):
+            if run_AGC(noun, verb) == target:
+                return (100 * noun + verb)
+
+print(find_target_value(19690720))
+
+# Answer: 2552
+
+# Checking this answer:
+# print(run_AGC(25,52))
