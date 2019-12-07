@@ -108,8 +108,18 @@ def find_target_value(target):
                 return (100 * noun + verb)
 
 print(find_target_value(19690720))
-
 # Answer: 2552
 
 # Checking this answer:
-# print(run_AGC(25,52))
+print(run_AGC(25,52))
+
+
+# Investigating this further:
+# prog0 = input_verb_noun(prob2b_base, 12, 2)
+
+# prog1 = step(prog0,0)[0]
+# prog2 = step(prog1,4)[0]
+
+# print(prog0[:20])
+# print(prog1[:20])
+# print(prog2[:20])
