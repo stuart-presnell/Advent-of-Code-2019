@@ -17,7 +17,7 @@ def parent_dict(L: List[Body]) -> Dict[Body,Body]:
     kvs = [xy.split(')') for xy in L]  # [['COM', 'B'], ... , ['K', 'L']]
     return {planet:sun for [sun,planet] in kvs}
 
-def chain(P: Dict[Body,Body], start_obj: Body) -> List[Body]:
+def find_chain(P: Dict[Body,Body], start_obj: Body) -> List[Body]:
     """Given a dictionary showing the parent of each body, and a particular body,
     return the sequence of bodies from start_obj to COM"""
     ch = [start_obj]
@@ -34,8 +34,8 @@ def intersect_chains(c1, c2):
 
 def number_of_transfers(L: List[Body], start_obj: Body, end_obj: Body) -> int:
     P = parent_dict(L)
-    c1 = chain(P, start_obj)
-    c2 = chain(P, end_obj)
+    c1 = find_chain(P, start_obj)
+    c2 = find_chain(P, end_obj)
     (route1, route2) = intersect_chains(c1, c2)
     return len(route1) + len(route2) - 4
 
@@ -59,8 +59,8 @@ K)YOU
 I)SAN""".split('\n')
 
 # P = parent_dict(test_input)
-# Cy = chain(P, 'YOU')
-# Cs = chain(P, 'SAN')
+# Cy = find_chain(P, 'YOU')
+# Cs = find_chain(P, 'SAN')
 # print(Cy)
 # print(Cs)
 # print(intersect_chains(Cy,Cs))
