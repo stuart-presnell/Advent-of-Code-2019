@@ -17,42 +17,27 @@ def parent_dict(L: List[Body]) -> Dict[Body,Body]:
     kvs = [xy.split(')') for xy in L]  # [['COM', 'B'], ... , ['K', 'L']]
     return {planet:sun for [sun,planet] in kvs}
 
-def children_dict(L: List[Body]) -> Dict[Body,List[Body]]:
-    D = {}
-    kvs = [xy.split(')') for xy in L] # [['COM', 'B'], ... , ['K', 'L']]
-    for [sun, planet] in kvs:
-        if sun in D:
-            D[sun].append(planet)
-        else:
-            D[sun] = [planet]
-    return D
+def chain(P: Dict[Body,Body], start_obj: Body) -> List[Body]:
+    """Given a dictionary showing the parent of each body, and a particular body,
+    return the sequence of bodies from start_obj to COM"""
+    ch = [start_obj]
+    while ch[-1] != 'COM':
+        ch.append(P[ch[-1]])
+    return ch
 
-def calculate_orbits(D: Dict[Body,List[Body]]) -> Dict[Body,int]:
-    """Given a dictionary of Bodies and their children: {'COM': ['B'], 'B': ['C', 'G'], 'C': ['D'], 'D': ['E', 'I'], 'E': ['F', 'J'], 'G': ['H'], 'J': ['K'], 'K': ['L']}
-    return a dictionary of Bodies and their orbits"""
-    orbits = {'COM': 0}
-    # print("Orbits known: " + str(orbits))
-    objects_to_process = [(planet, 'COM') for planet in D['COM']]
-    # print("Objects remaining to be processed: " + str(objects_to_process))
-    while objects_to_process:
-        (planet, sun) = objects_to_process[0]
-        # print("Current planet: " + planet + "; Sun: " + sun)
-        orbits[planet] = 1 + orbits[sun] # The number of indirect orbits of an object is 1 + the number of indirect orbits of its parent
-        # print("Orbits for " + planet + " = " + str(orbits[planet]))
-        if planet in D:
-            new_objects = [(moon, planet) for moon in D[planet]]
-            # print(new_objects)
-            objects_to_process.extend(new_objects)
-            # print("New list of objects to be processed: " + str(objects_to_process))
-        objects_to_process.remove((planet,sun))
-    return orbits
-    
-def total_orbits(L: List[Body]) -> int:
-    C = children_dict(L)
-    O = calculate_orbits(C)
-    return sum(list(O.values()))
+def intersect_chains(c1, c2):
+    for x in c1:
+        if x in c2:
+            i1 = c1.index(x)
+            i2 = c2.index(x)
+            return (c1[:i1+1], c2[:i2+1])
 
-
+def number_of_transfers(L: List[Body], start_obj: Body, end_obj: Body) -> int:
+    P = parent_dict(L)
+    c1 = chain(P, start_obj)
+    c2 = chain(P, end_obj)
+    (route1, route2) = intersect_chains(c1, c2)
+    return len(route1) + len(route2) - 4
 
 
 ####################################
@@ -73,20 +58,23 @@ K)L
 K)YOU
 I)SAN""".split('\n')
 
+# P = parent_dict(test_input)
+# Cy = chain(P, 'YOU')
+# Cs = chain(P, 'SAN')
+# print(Cy)
+# print(Cs)
+# print(intersect_chains(Cy,Cs))
 
-
-
-
-
+# print(number_of_transfers(test_input, 'SAN', 'YOU'))
 
 ####################################
 # Running the code on the main data:
 ####################################
 
-# prob6b_input: List[str]         = list_from_file('Prob6-input.txt')
-# print(total_orbits(prob6b_input))
+prob6b_input: List[str]         = list_from_file('Prob6-input.txt')
+print(number_of_transfers(prob6b_input, 'YOU', 'SAN'))
 
-# Answer: 
+# Answer: 322
 
 
 ####################################
@@ -110,7 +98,8 @@ I)SAN""".split('\n')
 
 # test_orbits: List[List[str]] = [xy.split(')') for xy in test_input] # [['COM', 'B'], ... , ['K', 'L']]
 # test_objects: List[str] = find_all_objects(test_orbits) # ['E', 'F', 'J', 'B', 'D', 'L', 'G', 'C', 'I', 'K', 'H', 'COM']
-# test_parents = find_parents(test_orbits) # [('I', ['D']), ('J', ['E']), ('F', ['E']), ('L', ['K']), ('COM', []), ('G', ['B']), ('D', ['C']), ('H', ['G']), ('C', ['B']), ('E', ['D']), ('B', ['COM']), ('K', ['J'])]
+# test_parents = find_parents(test_orbits) 
+# # [('I', ['D']), ('J', ['E']), ('F', ['E']), ('L', ['K']), ('COM', []), ('G', ['B']), ('D', ['C']), ('H', ['G']), ('C', ['B']), ('E', ['D']), ('B', ['COM']), ('K', ['J'])]
 
 
 ####################################
@@ -137,3 +126,6 @@ I)SAN""".split('\n')
 # print(T)
 # print(total_orbits(test_input))
 ####################################
+
+
+
