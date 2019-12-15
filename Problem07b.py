@@ -239,7 +239,16 @@ phase_settings_4 = [9,8,7,6,5]
 
 # testprog7a_3 = [3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]
 
-testprog7a_4 = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
+testprog7a_4 = [
+    3,26,           # Read input into {26}
+    1001,26,-4,26,  # Subtract 4 from {26}
+    3,27,           # Read input into {27}
+    1002,27,2,27,   # Multiply {27} by 2
+    1,27,26,27,     # {27} := {26} + {27}
+    4,27,           # Output {27}
+    1001,28,-1,28,  # Decrement {28}
+    1005,28,6,      # If {28} = 0 then exit else jump to {6}
+    99,0,0,5]
 
 # # output = chain_amplifiers(testprog7a_1, phase_settings_1, 0)
 # # output = chain_amplifiers(testprog7a_2, phase_settings_2, 0)
